@@ -1,8 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
-
-const User = sequelize.define(
-  "User",
+class User extends Model {}
+  User.init(
   {
     IdUser: {
       type: DataTypes.INTEGER,
@@ -40,6 +39,7 @@ const User = sequelize.define(
     HoatDongLanCuoi: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
       field: "HoatDongLanCuoi",
     },
     ChuoiHienTai: {
@@ -51,10 +51,13 @@ const User = sequelize.define(
     HoatDongGanNhat: {
       type: DataTypes.DATEONLY,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
       field: "HoatDongGanNhat",
     },
   },
   {
+    sequelize,
+    modelName: "User",
     tableName: "Users",
     timestamps: false, // tắt vì bảng không có CreatedAt/UpdatedAt tự động của Sequelize
     defaultScope: {
@@ -65,5 +68,4 @@ const User = sequelize.define(
     },
   },
 );
-
-module.exports = User;
+module.exports = User

@@ -3,8 +3,9 @@ const { DataTypes } = require("sequelize");
 // kết nối database
 const { sequelize } = require("../config/db");
 // Khai báo bảng
-const Subject = sequelize.define(
-  "Subject",
+class Subject extends Model {}
+
+Subject.init(
   {
     IdSubject: {
       type: DataTypes.INTEGER,
@@ -42,12 +43,14 @@ const Subject = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
-      field: "SoMucHoanThanh"
+      field: "SoMucHoanThanh",
     },
   },
   {
+    sequelize,          // bắt buộc — truyền kết nối vào ngay đây
+    modelName: "Subject", // bắt buộc — thay cho tham số đầu của define()
     tableName: "Subjects",
     timestamps: false,
-  },
+  }
 );
 module.exports = Subject
