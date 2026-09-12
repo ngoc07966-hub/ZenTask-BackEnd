@@ -1,8 +1,15 @@
 // gọi thư viện express (1)
+const express = require('express')
 // khởi tạo trạm điều hướng (2)
-// const router = express.Router()
+const router = express.Router()
 // gọi các đường dẫn  (3)
-// example: const + tên biến = require('./đường dẫn')
+const auth = require('../routes/auth.routes')
+const home = require('../routes/home.routes')
+const inputfile = require('../routes/inputfile.routes')
+const lichhoc = require('../routes/lichhoc.routes')
 //sử dụng các đường dần (4)
 // từ trạm điều hướng(2).use('/users', tên biến(3))
+router.use('/auth', auth)
+router.use('/home', home)
+
 // đóng gói dữ liệu

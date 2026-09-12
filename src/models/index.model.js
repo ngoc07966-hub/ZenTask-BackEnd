@@ -1,8 +1,16 @@
 // khai báo các dữ liệu và kết nối với bảng
-// example: const + tên bảng = require('./bảng')
-
+const User = require('./user.model')
+const Subject = require('./subject.model')
+const DanY = require('./dany.model')
 // Thể hiện mối quan hệ các bảng
-// example:
-// 1 user có thể có nhiều subject
-// sử dụng các từ khóa như hasMany (1-n), belongs To (n-1)
-// Tên bảng.từ khóa(Bảng khóa ngoại {foreign key: 'khóa ngoại'})
+// Bảng User với Subject
+User.hasMany(Subject,{foreignKey:'IdUser'}) 
+Subject.belongTo(User, {foreignKey:'IdUser'})
+// Bảng Subject với Dàn ý
+Subject.hasMany(DanY, { foreignKey: 'IdSubject' });
+DanY.belongsTo(Subject, { foreignKey: 'IdSubject' });
+// Quan hệ dàn ý với parent_Id
+DanY.belongsTo(DanY, { as: 'MucCha', foreignKey: 'ParentId' });
+DanY.hasMany(DanY, { as: 'MucCon', foreignKey: 'ParentId' });
+ 
+module.exports = { User, Subject, DanY };

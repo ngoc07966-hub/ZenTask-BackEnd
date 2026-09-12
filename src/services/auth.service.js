@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("../utils/jwt.util");
 // khai báo database
 const User = require("../models/user.model");
+//Hàm đăng ký
 async function register(hoTen, email, password) {
   const tonTaiUser = await User.findOne({ where: { Email: email } });
   if (tonTaiUser) {
@@ -20,6 +21,7 @@ async function register(hoTen, email, password) {
   });
   return newUser;
 }
+// Hàm đăng nhập
 async function login(email, password) {
   const user = await User.scope("withPassword").findOne({
     where: { Email: email },
