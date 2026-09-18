@@ -1,7 +1,7 @@
 // khai báo thư viện bcrypt
 const bcrypt = require("bcrypt");
 // khai báo util
-const jwt = require("../utils/jwt.util");
+const { taoToken } = require("../utils/jwt.util");
 // khai báo database
 const User = require("../models/user.model");
 //Hàm đăng ký
@@ -27,14 +27,13 @@ async function login(email, password) {
     where: { Email: email },
   });
   if (!user) {
-    throw new Error("Email đã tồn tại");
+    throw new Error("Email không đúng");
   }
   const isMatch = await bcrypt.compare(password, user.Password_Hash);
   if (!isMatch) {
     throw new Error("Mật khẩu không đúng");
   }
-  const token = jwt.sign({ userId: user.IdUser }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+  const token = taoToken({ userId: user.IdUser });
   return { token };
 }
+module.exports = { register, login };

@@ -10,4 +10,5 @@ app.get('/health', (req,res) => {
     res.json({message: 'Server is running'})
 })
 app.use('/api', require('./routes'))
+app.use(require('./middlewares/error.middleware'))
 module.exports = app

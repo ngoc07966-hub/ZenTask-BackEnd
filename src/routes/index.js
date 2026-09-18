@@ -4,12 +4,16 @@ const express = require('express')
 const router = express.Router()
 // gọi các đường dẫn  (3)
 const auth = require('../routes/auth.routes')
-const home = require('../routes/home.routes')
-const inputfile = require('../routes/inputfile.routes')
-const lichhoc = require('../routes/lichhoc.routes')
 //sử dụng các đường dần (4)
-// từ trạm điều hướng(2).use('/users', tên biến(3))
 router.use('/auth', auth)
-router.use('/home', home)
+if (process.env.AUTH_ONLY !== '1') {
+    const home = require('../routes/home.routes')
+    const inputfile = require('../routes/inputfile.routes')
+    const lichhoc = require('../routes/lichhoc.routes')
+    router.use('/home', home)
+    router.use('/input', inputfile)
+    router.use('/schedule', lichhoc)
+}
 
 // đóng gói dữ liệu
+module.exports = router

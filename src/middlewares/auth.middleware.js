@@ -1,4 +1,4 @@
-const jwt = require('../utils/jwt.util')
+const {giaimaToken} = require('../utils/jwt.util')
 
 async function authmiddleware (req, res, next) {
     try {
@@ -10,7 +10,7 @@ async function authmiddleware (req, res, next) {
         // loại bỏ bearer khỏi chuỗi token để JWT kiểm tra đoạn mã
         const token = authHeader.split(' ')[1]
         // JWT giải mã đoạn Token
-        const decoded = giamaToken(Token)
+        const decoded = giaimaToken(token)
         req.userId = decoded.userId
         next()
     }catch (error) {
