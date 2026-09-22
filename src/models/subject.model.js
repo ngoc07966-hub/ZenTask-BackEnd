@@ -1,5 +1,5 @@
 // kiểu datatypes kiểu dữ liệu
-const { DataTypes } = require("sequelize");
+const { DataTypes, Model } = require("sequelize");
 // kết nối database
 const { sequelize } = require("../config/db");
 // Khai báo bảng
@@ -47,10 +47,10 @@ Subject.init(
     },
   },
   {
-    sequelize,          // bắt buộc — truyền kết nối vào ngay đây
+    sequelize, // bắt buộc — truyền kết nối vào ngay đây
     modelName: "Subject", // bắt buộc — thay cho tham số đầu của define()
     tableName: "Subjects",
     timestamps: false,
-  }
+  },
 );
-module.exports = Subject
+module.exports = Subject;

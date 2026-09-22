@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: "{{bareUrl}}/home"
+method: GET
+order: 2117226318227310

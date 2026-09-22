@@ -1,11 +1,33 @@
-const { User, Subject } = require("../models/index.model");
+const { User, Subject, DanY } = require("../models/index.model");
+
 async function gethomeService(UserId) {
   const userPromise = User.findByPk(UserId);
   const subjectsPromise = Subject.findAll({ where: { IdUser: UserId } });
-  const [user, subjects] = await Promise.all([userPromise, subjectsPromise]);
+  // Lấy 5 mục DanY hoàn thành gần nhất, CHỈ của đúng user này
+  // (lọc qua include vì bảng DanY không có sẵn cột IdUser, chỉ có IdSubject)
+  const recentActivitiesPromise = DanY.findAll({
+    where: { TrangThaiHoanThanh: true },
+    order: [["NgayHoanThanh", "DESC"]],
+    limit: 5,
+    include: [
+      {
+        model: Subject,
+        where: { IdUser: UserId },
+        attributes: ["Ten"], // chỉ lấy tên Subject, không cần cả bản ghi
+      },
+    ],
+  });
+
+  const [user, subjects, recentActivities] = await Promise.all([
+    userPromise,
+    subjectsPromise,
+    recentActivitiesPromise,
+  ]);
+
   if (!user) {
     throw new Error("Người dùng không tồn tại");
   }
+
   const tienDo = subjects.map((sj) => {
     const phanTram =
       sj.TongSoMuc > 0
@@ -13,14 +35,12 @@ async function gethomeService(UserId) {
         : 0;
     return { ...sj.toJSON(), PhanTram: phanTram };
   });
-  const recentActivities = [...tienDo]
-        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-        .slice(0, 5);
 
-    return { 
-        streak: user.ChuoiHienTai, 
-        subjects: tienDo, 
-        recentActivities: recentActivities 
-    };
+  return {
+    streak: user.ChuoiHienTai,
+    subjects: tienDo,
+    recentActivities: recentActivities.map((danY) => danY.toJSON()),
+  };
 }
+
 module.exports = { gethomeService };

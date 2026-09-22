@@ -1,11 +1,6 @@
-const DataTypes = require("sequelize");
+const { DataTypes, Model } = require("sequelize");
 const { sequelize } = require("../config/db");
 class DanY extends Model {}
-/**
- *
-    NguonLoi nvarchar(500) null,
-    Constraint fk_sj_dy foreign key (IdSubject) references Subjects(IdSubject)
- */
 DanY.init(
   {
     IdDanY: {
@@ -22,7 +17,7 @@ DanY.init(
     // chứa dữ liệu của IdDanY (Cha)
     ParentId: {
       type: DataTypes.INTEGER,
-      allowNUll: false,
+      allowNull: true,
       field: "ParentId",
     },
     TieuDe: {
@@ -31,7 +26,7 @@ DanY.init(
       field: "TieuDe",
     },
     NoiDung: {
-      type: DataTypes.STRING(Max),
+      type: DataTypes.TEXT,
       allowNull: true,
       field: "NoiDung",
     },
@@ -39,6 +34,11 @@ DanY.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       field: "ThuTu",
+    },
+    CapDo: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "CapDo",
     },
     DoTinCay: {
       type: DataTypes.DECIMAL(4, 3),
