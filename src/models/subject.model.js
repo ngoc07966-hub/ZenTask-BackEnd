@@ -28,9 +28,10 @@ Subject.init(
       allowNull: false,
       field: "Ten",
     },
+    // cho phép null: Subject được tạo từ màn "Tạo Dàn Ý" khi chưa có hạn chót
     DeadLine: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
+      allowNull: true,
       field: "Deadline",
     },
     TongSoMuc: {

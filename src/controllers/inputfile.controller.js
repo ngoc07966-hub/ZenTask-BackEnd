@@ -1,4 +1,4 @@
-const { DanY, Subject } = require("../models/index.model");
+const { Subject } = require("../models/index.model");
 const { uploadFile } = require("../services/storage.service");
 const { xuLyTuFile, xuLyTuText } = require("../services/ai.service");
 const { trichXuatText } = require("../utils/pdf.util");
@@ -16,6 +16,17 @@ async function process(req, res) {
     }
     if (!file) {
       return res.status(400).json({ success: false, message: "Thiếu file" });
+    }
+
+    // Kiểm tra Subject thuộc về user trước khi tốn chi phí upload + gọi AI
+    const subject = await Subject.findOne({
+      where: { IdSubject: idSubject, IdUser: req.userId },
+    });
+    if (!subject) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy Subject hoặc bạn không có quyền",
+      });
     }
 
     const isPdf = file.mimetype.includes("pdf");
@@ -40,13 +51,8 @@ async function process(req, res) {
     }
 
     // Lưu toàn bộ mảng phẳng vào DanY, tự dựng quan hệ ParentId theo CapDo
+    // (kèm cập nhật TongSoMuc, cùng 1 transaction)
     const saved = await luuCayVaoDB(flatItems, idSubject);
-
-    // Cập nhật lại TongSoMuc trên Subject cho khớp số mục vừa thêm
-    await Subject.increment("TongSoMuc", {
-      by: saved.length,
-      where: { IdSubject: idSubject },
-    });
 
     res.json({ success: true, data: saved });
   } catch (error) {

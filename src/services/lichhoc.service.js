@@ -9,15 +9,32 @@ async function kiemTraQuyenSubject(idSubject, userId) {
     return subject
 }
 
+// Đổi Date (giờ địa phương) sang chuỗi 'YYYY-MM-DD' giống kiểu DATEONLY của Sequelize
+function layChuoiNgay(date) {
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, '0')
+    const d = String(date.getDate()).padStart(2, '0')
+    return `${y}-${m}-${d}`
+}
+
+// Số ngày chênh lệch giữa 2 chuỗi 'YYYY-MM-DD', bỏ qua phần giờ
+function soNgayGiua(ngayCu, ngayMoi) {
+    const [y1, m1, d1] = ngayCu.split('-').map(Number)
+    const [y2, m2, d2] = ngayMoi.split('-').map(Number)
+    return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / (1000 * 60 * 60 * 24))
+}
+
 // Tính Streak khi có 1 mục vừa được đánh dấu hoàn thành
 function tinhStreakMoi(user, homNay) {
     const hoatDongCu = user.HoatDongGanNhat
     if (!hoatDongCu) {
         return 1
     }
-    const soNgayCach = Math.floor((homNay - new Date(hoatDongCu)) / (1000 * 60 * 60 * 24))
+    const ngayCu = hoatDongCu instanceof Date ? layChuoiNgay(hoatDongCu) : String(hoatDongCu).slice(0, 10)
+    const soNgayCach = soNgayGiua(ngayCu, layChuoiNgay(homNay))
     if (soNgayCach === 0) {
-        return user.ChuoiHienTai
+        // User mới đăng ký có HoatDongGanNhat = hôm nay nhưng streak = 0 -> mục đầu tiên phải thành 1
+        return Math.max(1, user.ChuoiHienTai)
     } else if (soNgayCach === 1) {
         return user.ChuoiHienTai + 1
     } else {
@@ -27,6 +44,9 @@ function tinhStreakMoi(user, homNay) {
 
 async function taoLich(idSubject, userId) {
     const subject = await kiemTraQuyenSubject(idSubject, userId)
+    if (!subject.DeadLine) {
+        throw new Error('Subject chưa có hạn chót, vui lòng đặt Deadline trước khi lên lịch')
+    }
 
     const danYChuaLenLich = await DanY.findAll({
         where: { IdSubject: idSubject, NgayLenLich: null },
@@ -38,7 +58,7 @@ async function taoLich(idSubject, userId) {
     }
 
     const homNay = new Date()
-    const deadline = new Date(subject.Deadline)
+    const deadline = new Date(subject.DeadLine)
     const soNgay = Math.max(1, Math.ceil((deadline - homNay) / (1000 * 60 * 60 * 24)))
     const soMucMoiNgay = Math.ceil(danYChuaLenLich.length / soNgay)
 

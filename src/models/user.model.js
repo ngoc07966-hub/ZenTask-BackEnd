@@ -15,7 +15,7 @@ class User extends Model {}
       field: "HoTen",
     },
     Email: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(254),
       allowNull: false,
       unique: true,
       field: "Email",

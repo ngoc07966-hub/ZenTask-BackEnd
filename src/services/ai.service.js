@@ -21,7 +21,7 @@ async function xuLyTuFile(fileUrl, fileType) {
 
   const mimeType = fileType === "pdf" ? "application/pdf" : "image/jpeg";
 
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-flash-lite-latest" });
   const result = await model.generateContent([
     taoDanYTuFile,
     { inlineData: { data: base64Data, mimeType: mimeType } },
